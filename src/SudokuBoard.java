@@ -20,23 +20,23 @@ public class SudokuBoard extends Board{
         //System.out.println("bnum "+boxNum);
         Board box;
         switch(boxNum){
-            case 1: box = this.getSubSet(1,1,3,3);
+            case 1: box = super.getSubSet(1,1,3,3);
                     break;
-            case 2: box = this.getSubSet(1,4,3,6);
+            case 2: box = super.getSubSet(1,4,3,6);
                     break;
-            case 3: box = this.getSubSet(1,7,3,9);
+            case 3: box = super.getSubSet(1,7,3,9);
                     break;
-            case 4: box = this.getSubSet(4,1,6,3);
+            case 4: box = super.getSubSet(4,1,6,3);
                     break;
-            case 5: box = this.getSubSet(4,4,6,6);
+            case 5: box = super.getSubSet(4,4,6,6);
                     break;
-            case 6: box = this.getSubSet(4,7,6,9);
+            case 6: box = super.getSubSet(4,7,6,9);
                     break;
-            case 7: box = this.getSubSet(7,1,9,3);
+            case 7: box = super.getSubSet(7,1,9,3);
                     break;
-            case 8: box = this.getSubSet(7,4,9,6);
+            case 8: box = super.getSubSet(7,4,9,6);
                     break;
-            case 9: box = this.getSubSet(7,7,9,9);
+            case 9: box = super.getSubSet(7,7,9,9);
                     break;
 
             default: box = new Board(1,1);
@@ -50,6 +50,25 @@ public class SudokuBoard extends Board{
         }
         int r = (row-1)/3;
         return   ((col-1)/3+ 3*r)+1;
+    }
+
+    @Override
+    public SudokuBoard getSubSet(int rowTopLeft, int colTopLeft, int rowBotRight, int colBotRight){
+        if(rowTopLeft<1 || rowBotRight>getRowSize() || colTopLeft<1|| colBotRight>getColSize()){
+            throw new IndexOutOfBoundsException("one of the variables exceeds the bounds of the original array");
+        }
+        int rowLength = colBotRight - colTopLeft + 1, colLength = rowBotRight-rowTopLeft +1;
+        if(rowLength<1|| colLength<1){
+            System.exit(1);
+        }
+        SudokuBoard subSet = new SudokuBoard();
+
+        for(int row = rowTopLeft; row<= rowBotRight; row++){
+            for(int col = colTopLeft; col<=colBotRight; col++){
+                subSet.setData((row-rowTopLeft)+1,(col-colTopLeft)+1,this.getData(row, col));
+            }
+        }
+        return subSet;
     }
 
     public boolean isValid(int row, int col, int data){

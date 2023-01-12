@@ -1,5 +1,7 @@
 public interface SolveAlgorithm {
 
-    public SudokuBoard solveBoard(SudokuBoard input);
+    public static SudokuBoard solveBoard(SudokuBoard input){
+        return new SudokuBoard();
+    }
 
 }

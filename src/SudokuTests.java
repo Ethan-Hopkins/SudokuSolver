@@ -243,4 +243,12 @@ public class SudokuTests {
         sud.setData(1,1,0);
         assertFalse(sud.isSolved());
     }
+
+    @Test
+    public void testBackTracingSolve(){
+        File b = new File("src/TestFiles/Board.txt");
+        SudokuBoard sud = new SudokuBoard(b);
+        SudokuBoard solved = SudokuBackTracing.solveBoard(sud);
+        System.out.println(solved);
+    }
 }
