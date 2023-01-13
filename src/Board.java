@@ -1,200 +1,159 @@
-import java.util.HashSet;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-class Board {
-    public Row[] board;
-    public int gRC =0, gCC= 0, gBC=0, gisV=0;
-    public Board() {
-        board = new Row[9];
-        for (int i = 0; i < 9; i++) {
-            board[i] = new Row();
-        }
-        solveFrom();
-    }
 
-    public void setData(int row, int col, int data) {
-        board[row].set(col, data);
-    }
+class Board implements Grid{
 
-    public void numUsed(){
-        System.out.println(gRC+" "+gCC+" "+ gBC+" "+gisV);
-    }
-    private int findBox(int row, int col){
-        int r = row/3;
-        return   col/3+ 3*r;
-    }
+    private final int rowSize;
+    private final int colSize;
+    private final int[][] board;
 
-    private void testbox(){
-        System.out.println(findBox(1, 1));
-        System.out.println(findBox(1, 3));
-        System.out.println(findBox(1, 6));
-        System.out.println(findBox(3, 1));
-        System.out.println(findBox(3, 3));
-        System.out.println(findBox(3, 6));
-        System.out.println(findBox(6, 1));
-        System.out.println(findBox(6, 3));
-        System.out.println(findBox(8, 8));
+    public Board(int rowSize,int colSize){
+        if(rowSize>0) this.rowSize = rowSize;
+        else this.rowSize = 1;
+        if(colSize>0) this.colSize = colSize;
+        else this.colSize = 1;
+        board = new int[rowSize][colSize];
     }
-
-    public Row getRow(int index) {
-        gRC++;
-        return board[index];
-    }
-
-    private Row getCol(int index) {
-        gCC++;
-        Row col = new Row();
-        for (int i = 0; i < 9; i++) {
-            col.set(i, board[i].get(index));
-        }
-        return col;
-    }
-
-    public int getData(int row, int col){
-        return board[row].get(col);
-    }
-    private Row getBox(int index) {
-        gBC++;
-        int colInitial = index % 3;
-        int rowInitial = index / 3;
-        int row = rowInitial * 3;
-        int col = colInitial * 3;
-        Row box = new Row();
-        for (int i = 0; i < 9; i++) {
-            //System.out.println(row + " " + col);
-            box.set(i, board[row].get(col));
-            col++;
-            if (col % 3 == 0) {
-                col = colInitial*3;
-                row++;
-            }
-        }
-        return box;
-    }
-
-    private void testSolve(){
-        int[] test = {4,8,3,9,2,1,6,5,7,9,6,7,3,4,5,8,2,1,2,5,1,8,7,6,4,9,3,5,4,8,1,3,2,9,7,6,7,2,9,5,6,4,1,3,8,1,3,6,7,9,8,2,4,5,3,7,2,6,8,9,5,1,4,8,1,4,2,5,3,7,6,9,6,9,5,4,1,7,3,8,2};
-        int row = 0;
-        for(int i = 0; i< 81; ){
-            int col = i%9;
-            setData(row,col,test[i]);
-            i++;
-            if(i%9 ==0) row++;
-        }
-    }
-
-    private void solveFrom(){
-        String B = "";
+    public Board(File InputFile){
+        //this method will fuck up with ints larger than 9
+        int rowLen = 0;
+        int colLen = 0;
+        StringBuilder boardFill = new StringBuilder(" ");
         try {
-            File myObj = new File("src/Board.txt");
+            Scanner fileReader = new Scanner(InputFile);
+            while (fileReader.hasNextLine()) {
+                String line = fileReader.nextLine().replace(" ","");
+                //System.out.println(line);
+                boardFill.append(line);
+                String[] intData = line.split("");
+                colLen=0;
+                rowLen++;
+                for(String ignored : intData){
 
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                B += data;
+                    colLen++;
+                    //System.out.println(ignored+ ' '+ colLen);
+                }
             }
-            myReader.close();
-            int row = 0;
-            for(int i = 0; i<81; ){
-                int col = i%9;
-                setData(row,col,B.charAt(i)-48);
-                i++;
-                if(i%9 ==0) row++;
-            }
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e){
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        //System.out.println(B);
+        //System.out.println(rowLen+ " " + colLen);
+        if(rowLen>0) this.rowSize = rowLen;
+        else this.rowSize = 1;
+        if(colLen>0) this.colSize = colLen;
+        else this.colSize = 1;
+        board = new int[rowSize][colSize];
+
+        String[] data = boardFill.toString().trim().split("");
+        int dataIndex = 0;
+        for(int row = 1; row<=rowSize; row++){
+            for(int col = 1; col<=colSize; col++){
+                //System.out.println(dataIndex+ " "+ data[dataIndex]);
+                this.setData(row,col,Integer.parseInt(data[dataIndex]));
+                dataIndex++;
+            }
+        }
+
 
     }
+    @Override
+    public void setData(int row, int col, int data) throws IndexOutOfBoundsException {
+        board[row-1][col-1] = data;
+    }
 
-    public boolean isSolved() {
-        for(int i = 0; i<9; i++){
-            Row row = getRow(i);
-            Row col = getCol(i);
-            Row box = getBox(i);
-            HashSet<Integer> r = new HashSet<Integer>();
-            HashSet<Integer> c = new HashSet<Integer>();
-            HashSet<Integer> b = new HashSet<Integer>();
-            for(int j = 0; j< 9; j++){
-                if(row.get(j) ==0||col.get(j)==0 || box.get(i) ==0){
-                    return false;
+    @Override
+    public int getData(int row, int col) throws IndexOutOfBoundsException {
+        return board[row-1][col-1];
+    }
+
+    @Override
+    public Board getRow(int row) throws IndexOutOfBoundsException{
+        if(row>0&& row<=rowSize) {
+            Board retRow = new Board(1,colSize);
+            for (int col = 1; col <= colSize; col++) {
+                retRow.setData(1,col,this.getData(row,col));
+            }
+            return retRow;
+        }
+        else{
+            throw new IndexOutOfBoundsException("row or col is not within bounds unable to getRow");
+        }
+    }
+
+    @Override
+    public Board getCol(int col) {
+        if(col>0&& col<=colSize) {
+            Board retCol = new Board(rowSize,1);
+            for (int row = 1; row <= rowSize; row++) {
+                retCol.setData(row,1,this.getData(row,col));
+            }
+            return retCol;
+        }
+        else{
+            throw new IndexOutOfBoundsException("row or col is not within bounds unable to getRow");
+        }
+    }
+
+    public int getRowSize(){
+        return rowSize;
+    }
+
+    public int getColSize(){
+        return colSize;
+    }
+    @Override
+    public Board getSubSet(int rowTopLeft, int colTopLeft, int rowBotRight, int colBotRight){
+        int rowLength = colBotRight - colTopLeft + 1, colLength = rowBotRight-rowTopLeft +1;
+        if(rowLength<1|| colLength<1){
+            System.exit(1);
+        }
+        Board subSet = new Board(rowLength, colLength);
+
+        for(int row = rowTopLeft; row<= rowBotRight; row++){
+            for(int col = colTopLeft; col<=colBotRight; col++){
+                subSet.setData((row-rowTopLeft)+1,(col-colTopLeft)+1,this.getData(row, col));
+            }
+        }
+        return subSet;
+    }
+    public boolean equals(Board boardToCheck){
+        if(this.rowSize!= boardToCheck.rowSize && this.colSize != boardToCheck.colSize) {
+            return false;
+        }
+        else{
+            for(int row = 1; row<= rowSize; row++){
+                for(int col = 1; col <= colSize; col++){
+                    if(this.getData(row,col)!=boardToCheck.getData(row,col)){
+                        return false;
+                    }
                 }
-                else{
-                    r.add(row.get(j));
-                    c.add(col.get(j));
-                    b.add(box.get(j));
+            }
+            return true;
+        }
+    }
+
+    public boolean contains(int data){
+        for(int row = 1; row<= rowSize; row++){
+            for(int col = 1; col<= colSize; col++){
+                if(this.getData(row,col)==data){
+                    return true;
                 }
             }
-            if(r.size()+c.size()+b.size() != 27){
-                return false;
-            }
-            r.clear();
-            c.clear();
-            b.clear();
         }
-        return true;
+        return false;
     }
 
-    public boolean isValid(int row, int col, int data){
-        gisV++;
-        Row Row = getRow(row);
-        Row Col = getCol(col);
-        Row Box = getBox(findBox(row,col));
-        for(int index = 0; index<9; index++){
-
-            if((Row.get(index) == data)||(Col.get(index) == data )|| Box.get(index) == data){
-                return false;
+    public String toString(){
+        StringBuilder output = new StringBuilder("Board:\n");
+        for(int i = 1; i<= rowSize; i++){
+            for( int j = 1; j<= colSize; j++){
+                output.append(this.getData(i, j)).append(" ");
             }
+            output.append("\n");
         }
-        return true;
-    }
-
-    public String toString() {
-        String output = "";
-        for (Row row : board) {
-            for (int i = 0; i < 9; i++) {
-                output += row.get(i) + "\t";
-            }
-            output += "\n\n";
-        }
-        return output;
-    }
-
-    class Row {
-        public int[] row;
-
-        public Row(int initial) {
-            row = new int[9];
-            for (int i = 0; i < 9; i++) {
-                row[i] = initial;
-            }
-        }
-
-        public Row() {
-            int initial = 0;
-            row = new int[9];
-            for (int i = 0; i < 9; i++) {
-                row[i] = initial;
-            }
-        }
-
-        public int get(int index) {
-            return row[index];
-        }
-
-        public void set(int index, int value) {
-            row[index] = value;
-        }
-
-        public String toString() {
-            String output = "";
-            for (int data : row) {
-                output += data + " ";
-            }
-            return output;
-        }
+        return output.toString();
     }
 }
