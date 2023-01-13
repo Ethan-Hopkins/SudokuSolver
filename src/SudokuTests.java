@@ -102,8 +102,6 @@ public class SudokuTests {
         bd.setData(5,6, 33);
         Board expected = new Board(5,1);
         expected.setData(1,1,56);
-        //System.out.println(expected.toString());
-        //System.out.println(bd.getCol(6).toString());
         assertFalse("This should equal the sixth col in the board",bd.getCol(6).equals(expected));
         expected.setData(5,1,33);
         //System.out.println(expected.toString());
@@ -236,7 +234,7 @@ public class SudokuTests {
     public void testIsSolved(){
         File b = new File("src/TestFiles/SolvedBoard.txt");
         SudokuBoard sud = new SudokuBoard(b);
-        System.out.println(sud.toString());
+        System.out.println(sud);
         assertTrue(sud.isSolved());
         sud.setData(1,1,1);
         assertFalse(sud.isSolved());
@@ -248,7 +246,6 @@ public class SudokuTests {
     public void testBackTracingSolve(){
         File b = new File("src/TestFiles/Board.txt");
         SudokuBoard sud = new SudokuBoard(b);
-        ;
         long startTime = System.nanoTime();
         SudokuBoard solved = SudokuBackTracing.solveBoard(sud);
         System.out.println(solved);

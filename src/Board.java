@@ -61,23 +61,12 @@ class Board implements Grid{
     }
     @Override
     public void setData(int row, int col, int data) throws IndexOutOfBoundsException {
-        if((row>0&& row<=rowSize) && (col>0 && col<=colSize)) {
-            board[row-1][col-1] = data;
-        }
-        else{
-            throw new IndexOutOfBoundsException("row or col is not within bounds unable to set");
-        }
+        board[row-1][col-1] = data;
     }
 
     @Override
     public int getData(int row, int col) throws IndexOutOfBoundsException {
-        if((row>0&& row<=rowSize) && (col>0 && col<=colSize)) {
-            return board[row-1][col-1];
-        }
-        else{
-            throw new IndexOutOfBoundsException("row or col is not within bounds unable to getData");
-        }
-
+        return board[row-1][col-1];
     }
 
     @Override
@@ -117,9 +106,6 @@ class Board implements Grid{
     }
     @Override
     public Board getSubSet(int rowTopLeft, int colTopLeft, int rowBotRight, int colBotRight){
-        if(rowTopLeft<1 || rowBotRight>rowSize || colTopLeft<1|| colBotRight>colSize){
-            throw new IndexOutOfBoundsException("one of the variables exceeds the bounds of the original array");
-        }
         int rowLength = colBotRight - colTopLeft + 1, colLength = rowBotRight-rowTopLeft +1;
         if(rowLength<1|| colLength<1){
             System.exit(1);

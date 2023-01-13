@@ -1,10 +1,6 @@
 import java.util.Stack;
 
 public class SudokuBackTracing implements SolveAlgorithm {
-    static int row = 1;
-    static int col = 1;
-
-    static SudokuBoard toSolve;
     public static SudokuBoard solveBoard(SudokuBoard input)
     {
         Stack<position> remaining = new Stack<>(), added = new Stack<>();
@@ -58,7 +54,9 @@ public class SudokuBackTracing implements SolveAlgorithm {
 
 
     private static class position{
-        private int row, col, check;
+        private final int row;
+        private final int col;
+        private int check;
         public position(int row, int col, int check){
             this.row = row;
             this.col = col;
