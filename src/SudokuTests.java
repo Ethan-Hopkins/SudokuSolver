@@ -248,6 +248,7 @@ public class SudokuTests {
     public void testBackTracingSolve(){
         File b = new File("src/TestFiles/Board.txt");
         SudokuBoard sud = new SudokuBoard(b);
+        ;
         long startTime = System.nanoTime();
         SudokuBoard solved = SudokuBackTracing.solveBoard(sud);
         System.out.println(solved);

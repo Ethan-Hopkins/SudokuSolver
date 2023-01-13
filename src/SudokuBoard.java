@@ -52,25 +52,6 @@ public class SudokuBoard extends Board{
         return   ((col-1)/3+ 3*r)+1;
     }
 
-    @Override
-    public SudokuBoard getSubSet(int rowTopLeft, int colTopLeft, int rowBotRight, int colBotRight){
-        if(rowTopLeft<1 || rowBotRight>getRowSize() || colTopLeft<1|| colBotRight>getColSize()){
-            throw new IndexOutOfBoundsException("one of the variables exceeds the bounds of the original array");
-        }
-        int rowLength = colBotRight - colTopLeft + 1, colLength = rowBotRight-rowTopLeft +1;
-        if(rowLength<1|| colLength<1){
-            System.exit(1);
-        }
-        SudokuBoard subSet = new SudokuBoard();
-
-        for(int row = rowTopLeft; row<= rowBotRight; row++){
-            for(int col = colTopLeft; col<=colBotRight; col++){
-                subSet.setData((row-rowTopLeft)+1,(col-colTopLeft)+1,this.getData(row, col));
-            }
-        }
-        return subSet;
-    }
-
     public boolean isValid(int row, int col, int data){
         if(data>9 || data < 1) return false;
         int holdDataVal = this.getData(row,col);
@@ -78,7 +59,6 @@ public class SudokuBoard extends Board{
         Board Row = this.getRow(row);
         Board Col = this.getCol(col);
         Board Box = this.getBox(row,col);
-        //System.out.println(Row.toString()+ "\n"+ Col.toString()+"\n"+ Box.toString());
         this.setData(row,col,holdDataVal);
         return !Row.contains(data) && !Col.contains(data) && !Box.contains(data);
     }
@@ -86,7 +66,6 @@ public class SudokuBoard extends Board{
     public boolean isSolved(){
         for(int row = 1; row<= getRowSize(); row++){
             for(int col = 1; col<= getColSize(); col++){
-                //System.out.println(row+ " "+ col + " " + this.getData(row,col));
                 if(!this.isValid(row,col,this.getData(row,col))){
                     return false;
                 }

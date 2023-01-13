@@ -14,11 +14,10 @@ public class SudokuBackTracing implements SolveAlgorithm {
             }
         }
         if(remaining.empty() && input.isSolved()) return input;
-        System.out.println(remaining);
+        //System.out.println(remaining);
         position current = remaining.pop();
-        int test = 0;
+
         while(!remaining.empty()||!input.isSolved()){
-            test++;
             //System.out.print(current+ "\n"+ input );
             // check (lastchecked) if it is valid
             // if it is add lastchecked to input at row col
