@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 public class SudokuBackTracing implements SolveAlgorithm {
     static int row = 1;
     static int col = 1;
@@ -5,70 +7,87 @@ public class SudokuBackTracing implements SolveAlgorithm {
     static SudokuBoard toSolve;
     public static SudokuBoard solveBoard(SudokuBoard input)
     {
-        toSolve = input;
-        SudokuBoard solved = toSolve.getSubSet(1,1,9,9);
-        //solved.toString();
-
-        int numToCheck=1;
-        while(row+col<=18 &&!solved.isSolved()){
-            if(row+col==18) System.exit(0);
-            //System.out.println(row+" "+ col+" "+ numToCheck+"\n"+ solved.toString());
-            if(toSolve.getData(row, col) !=0){
-                //System.out.println("test1");
-                advance();
+        Stack<position> remaining = new Stack<>(), added = new Stack<>();
+        for(int row = 9; row>=1; row--){
+            for(int col = 9; col>=1; col--){
+                if(input.getData(row,col)==0) remaining.push(new position(row, col, 1));
             }
+        }
+        if(remaining.empty() && input.isSolved()) return input;
+        System.out.println(remaining);
+        position current = remaining.pop();
+        int test = 0;
+        while(!remaining.empty()||!input.isSolved()){
+            test++;
+            //System.out.print(current+ "\n"+ input );
+            // check (lastchecked) if it is valid
+            // if it is add lastchecked to input at row col
+            // also  add current to added and pop new current from remaining
+            if(input.isValid(current.getRow(), current.getCol(), current.getCheck())){
+                //System.out.print("test1");
+                input.setData(current.getRow(),current.getCol(), current.getCheck());
+                current.incCheck();
+                added.push(current);
+                if(remaining.empty()) return input;
+                current = remaining.pop();
+            }
+            //if its not either
+            // add 1 to current .lastchecked
+            // or if lastchecked = 9
+            //  set lastchecked = 0 add current to remaining pop from added
             else{
-                if(numToCheck>9){
-                    //System.out.println("test2");
-                    solved.setData(row,col,toSolve.getData(row,col));
-                    retreat();
-                    numToCheck = solved.getData(row, col)+1;
-                    solved.setData(row, col, 0);
-                }
-                else if(solved.isValid(row,col,numToCheck)){
-                    //System.out.println("test3");
-                    solved.setData(row, col, numToCheck);
-                    numToCheck = 1;
-                    advance();
-                }
-                else {
-                    numToCheck++;
-                    //System.out.println("test4");
-                }
-            }
-        }
-        return solved;
-    }
+                if(current.getCheck()>=9){
 
-    private static void advance(){
-        if((row)*(col)<81) {
-            if (col < 9) {
-                col++;
-            } else {
-                col = 1;
-                row++;
-            }
-        }
-    }
-
-    private static void retreat(){
-        if(row+col>1){
-            if (col > 1) {
-                col--;
-            } else {
-                col = 9;
-                row--;
-            }
-            while(toSolve.getData(row, col)!=0) {
-                if(row+col>1){
-                    if (col > 1) {
-                        col--;
-                    } else {
-                        col = 9;
-                        row--;
+                    input.setData(current.row, current.col, 0);
+                    current.setCheck(1);
+                    remaining.push(current);
+                    if(!added.empty()) {
+                        current = added.pop();
+                        input.setData(current.row, current.col, current.check);
                     }
+                    else System.exit(1);
+                }
+                else{
+                    current.incCheck();
                 }
             }
+            //System.out.println();
+        }
+
+        return input;
+    }
+
+
+    private static class position{
+        private int row, col, check;
+        public position(int row, int col, int check){
+            this.row = row;
+            this.col = col;
+            this.check = check;
+        }
+
+        public int getRow(){
+            return row;
+        }
+
+        public int getCol(){
+            return col;
+        }
+
+        public int getCheck(){
+            return check;
+        }
+
+        public void incCheck(){
+            check++;
+        }
+
+        public void setCheck(int value){
+            check = value;
+        }
+
+        public String toString(){
+            return row+ " " + col + " "+ check;
         }
     }
 }

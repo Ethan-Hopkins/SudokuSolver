@@ -72,12 +72,14 @@ public class SudokuBoard extends Board{
     }
 
     public boolean isValid(int row, int col, int data){
+        if(data>9 || data < 1) return false;
+        int holdDataVal = this.getData(row,col);
         this.setData(row,col,0);
         Board Row = this.getRow(row);
         Board Col = this.getCol(col);
         Board Box = this.getBox(row,col);
         //System.out.println(Row.toString()+ "\n"+ Col.toString()+"\n"+ Box.toString());
-        this.setData(row,col,data);
+        this.setData(row,col,holdDataVal);
         return !Row.contains(data) && !Col.contains(data) && !Box.contains(data);
     }
 
