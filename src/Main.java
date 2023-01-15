@@ -10,9 +10,11 @@ class Main {
         SudokuBoard solved = SudokuBackTracing.solveBoard(sud);
         long stopTime = System.nanoTime();
 
+
         System.out.println(solved+"\n\n");
         if(solved.isSolved()) System.out.println("Successfully solved in ");
         else System.out.println("failed ");
-        System.out.println((double)(stopTime - startTime)/1000000000+ " seconds");
+        System.out.println((double)(stopTime - startTime)/1000000000+ " seconds\n");
+
     }
 }
